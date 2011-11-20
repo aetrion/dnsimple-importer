@@ -1,23 +1,11 @@
+require 'dnsimple'
+DNSimple::Client.load_credentials
+
 module DNSimple
   module Tinydns
-    class ZoneImporter
-      def import(f, name=nil)
-        puts "importing from '#{f}'"
-        name = extract_name(File.basename(f)) unless name
-        import_from_string(IO.read(f), name)
-      end
-
+    class ZoneImporter < DNSimple::ZoneImporter
       def import_from_string(s, name=nil)
         zone = Tinydns::Zonefile.load(s, name)
-
-        domain = nil
-        begin
-          domain = DNSimple::Domain.find(name)
-        rescue => e
-          domain = DNSimple::Domain.create(name) 
-        end
-        puts "domain name: #{domain.name}"
-
         zone.records.each do |r|
           begin
             case r
@@ -42,13 +30,12 @@ module DNSimple
             end
           rescue DNSimple::RecordExists
             puts "...already exists."
+          rescue Error => e
+            record_failed r, e
+          end
+
           end
         end
-      end
-
-      def extract_name(n)
-        n = n.gsub(/\.db/, '')
-        n = n.gsub(/\.txt/, '')
       end
     end
   end
