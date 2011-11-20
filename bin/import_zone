@@ -1,7 +1,11 @@
 #!/usr/bin/env ruby
 
+YAML::ENGINE.yamler = 'syck'
+
 require 'optparse'
 $:.unshift('lib')
+
+require 'dnsimple/zone_importer'
 
 options = {}
 
@@ -31,3 +35,12 @@ else
     importer.import(f)
   end
 end
+
+if importer.records_failed?
+  puts "Some records could not be processed:"
+  importer.failed_records.each do |record|
+    r = record[:record]
+    puts "#{r.host} #{r.class} #{r.address if r.respond_to?(:address)} #{r.domainname if r.respond_to?(:domainname)} -> #{record[:error].class} #{record[:error]}"
+  end
+end
+
