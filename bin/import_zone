@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+YAML::ENGINE.yamler = 'syck'
+
 require 'optparse'
 $:.unshift('lib')
 
