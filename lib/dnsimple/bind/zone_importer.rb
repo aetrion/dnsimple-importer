@@ -24,6 +24,8 @@ module DNSimple
           domain = DNSimple::Domain.create(name) 
         end
         puts "domain name: #{domain.name}"
+        
+        failed_records = []
 
         zone.records.each do |r|
           ttl = dnsimple_ttl r.ttl
@@ -63,6 +65,16 @@ module DNSimple
             end
           rescue DNSimple::RecordExists => e
               puts "...already exists."
+          rescue Error => e
+            failed_records << {:error => e, :record => r}
+          end
+
+        end
+        if not failed_records.empty?
+          puts "Some records could not be processed:"
+          failed_records.each do |record|
+            r = record[:record]
+            puts "#{r.host} #{r.class} #{r.address if r.respond_to?(:address)} #{r.domainname if r.respond_to?(:domainname)} -> #{record[:error]}"
           end
         end
       end
