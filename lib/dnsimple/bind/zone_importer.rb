@@ -5,10 +5,19 @@ DNSimple::Client.load_credentials
 module DNSimple
   module Bind
     class ZoneImporter < DNSimple::ZoneImporter
+
+      def sanitize_host(hostname)
+        if hostname[hostname.length - 1] == "."
+          hostname.slice(0,hostname.length - 1)
+        else
+          hostname
+        end
+      end
       def import_from_string(s, name=nil)
         zone = DNS::Zonefile.load(s, name)
         zone.records.each do |r|
           ttl = sanitize_ttl r.ttl
+          r.domainname = sanitize_host r.domainname if r.respond_to?(:domainname)
           begin
             case r
             when DNS::A then
