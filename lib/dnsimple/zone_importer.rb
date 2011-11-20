@@ -15,7 +15,7 @@ module DNSimple
     
     def import(f, name=nil)
       puts "importing from '#{f}'"
-      name = extract_name(File.basename(f)) unless name
+      name = resolve_name(File.basename(f)) unless name
       puts "origin: #{name}"
       @domain = get_domain name
       puts "domain name: #{@domain.name}"
@@ -28,12 +28,12 @@ module DNSimple
       raise NotImplementedError
     end
 
-    def extract_name(n)
+    def resolve_name(n)
       n = n.gsub(/\.db/, '')
       n = n.gsub(/\.txt/, '')
     end
 
-    def host_name(n, d)
+    def extract_host_name(n, d)
       n.gsub(/\.?#{d}\.?/, '')
     end
 
@@ -52,6 +52,16 @@ module DNSimple
         domain = DNSimple::Domain.create(name)
       end
       domain
+    end
+
+    def create_record(hostname, type, content, ttl, priority=nil)
+      DNSimple::Record.create(
+        domain.name,
+        extract_host_name(hostname, domain.name),
+        type,
+        content,
+        :ttl => ttl,
+        :priority => priority)
     end
   end
 end
