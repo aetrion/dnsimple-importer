@@ -25,9 +25,9 @@ module DNSimple
         unless dryrun?
           domain = nil
           begin
-            domain = DNSimple::Domain.find(name)
+            domain = DNSimple::Domain.find(name, {})
           rescue => e
-            domain = DNSimple::Domain.create(name) 
+            domain = DNSimple::Domain.create(name, {})
           end
           puts "domain name: #{domain.name}"
         end
@@ -37,7 +37,8 @@ module DNSimple
             puts "importing #{r.inspect}"
             import_record(domain, r) unless dryrun?
           rescue => e
-            puts "Error importing #{r.host}: #{e.message}"
+            puts "Error importing #{r}: #{e.message}"
+            puts e.backtrace.join("\n")
           end
         end
       end

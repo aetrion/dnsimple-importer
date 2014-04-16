@@ -6,11 +6,14 @@ $:.unshift('lib')
 options = {}
 
 ARGV.options do |opts|
-  opts.on('-t', "--type=[val]", String, "The type of zone file (either bind or tinydns)", "Default: bind") do |type|
+  opts.on('-t', "--type=FILE", String, "The type of zone file (either bind or tinydns)", "Default: bind") do |type|
     options[:type] = type
   end
   opts.on('-d', "--debug", "Turn on debugging") do
     options[:debug] = true
+  end
+  opts.on('-n', "--dryrun", "Turn on dry run mode") do
+    options[:dryrun] = true
   end
   opts.parse!
 end
@@ -34,8 +37,11 @@ else
   raise "You must specify either bind or tinydns for the parser type"
 end
 
+importer.dryrun = true if options[:dryrun]
+
 if ARGV.empty?
   puts "You must pass at least one zone file"
+  puts ARGV.options.help
 else
   ARGV.each do |f|
     importer.import(f)

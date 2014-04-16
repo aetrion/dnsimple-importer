@@ -1,11 +1,10 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'treetop'
 gem 'polyglot'
-gem 'dns-zonefile', :git => 'git://github.com/aeden/dns-zonefile.git'
+gem 'dns-zonefile'
+gem 'public_suffix'
 gem 'dnsimple-ruby'
-
-gem 'ruby-debug19'
 
 group :development do
   gem 'rspec'
