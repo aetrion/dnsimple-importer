@@ -93,6 +93,7 @@ module DNSimple
       def self.parse_line(line, quiet)
         case line
         when /^\+([^:]+):([^:]+):?(.*)/ then Tinydns::A.new($1, $2, $3)
+        when /^\=([^:]+):([^:]+):?(.*)/ then Tinydns::A.new($1, $2, $3)
         when /^C([^:]+):([^:]+):?(.*)/ then Tinydns::CNAME.new($1, $2, $3)
         when /^@([^:]+):([^:]*):([^:]+):?([^:]*):?([^:]*)/ then Tinydns::MX.new($1, $3, $5, $4)
         when /^\'([^:]+):([^:]+):?(.*)/ then Tinydns::TXT.new($1, $2, $3)
