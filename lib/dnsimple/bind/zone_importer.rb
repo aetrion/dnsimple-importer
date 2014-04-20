@@ -6,9 +6,10 @@ module DNSimple
   module Bind
     class ZoneImporter
 
-      attr_accessor :dryrun
+      attr_accessor :dryrun, :quiet
 
       alias :dryrun? :dryrun
+      alias :quiet? :quiet
         
       def import(f, name=nil)
         puts "importing from '#{f}'"

@@ -15,6 +15,9 @@ ARGV.options do |opts|
   opts.on('-n', "--dryrun", "Turn on dry run mode") do
     options[:dryrun] = true
   end
+  opts.on('-q', "--quiet", "Only report actual changes") do
+    options[:quiet] = true
+  end
   opts.parse!
 end
 
@@ -38,6 +41,7 @@ else
 end
 
 importer.dryrun = true if options[:dryrun]
+importer.quiet = true if options[:quiet]
 
 if ARGV.empty?
   puts "You must pass at least one zone file"

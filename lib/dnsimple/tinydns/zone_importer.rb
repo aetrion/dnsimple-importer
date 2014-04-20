@@ -7,25 +7,27 @@ DNSimple::Client.load_credentials
 module DNSimple
   module Tinydns
     class ZoneImporter
-      attr_accessor :dryrun
+      attr_accessor :dryrun, :quiet
 
       alias :dryrun? :dryrun
+      alias :quiet? :quiet
 
       def import(f)
-        puts "importing from '#{f}'"
+        puts "importing from '#{f}'" unless quiet?
         import_from_string(IO.read(f))
       end
 
       def import_from_string(s)
-        zone = Tinydns::Zonefile.load(s)
+        zone = Tinydns::Zonefile.load(s, quiet)
 
         zone.records.each do |r|
           domain = dnsimple_domain(r.name)
           begin
-            puts "Importing #{r}"
+            puts "Importing #{r}" unless quiet?
             import_record(domain, r)
+            puts "Created record #{r}"
           rescue DNSimple::RecordExists => e
-            puts "Record #{r} exists, skipping"
+            puts "Record #{r} exists, skipping" unless quiet?
           rescue => e
             puts "Error importing #{r}: #{e.message}"
             puts e.backtrace.join("\n")
@@ -42,7 +44,7 @@ module DNSimple
         if (!domain)
           begin
             domain = DNSimple::Domain.find(domain_name)
-            puts "Found domain: #{domain.inspect}"
+            puts "Found domain: #{domain.inspect}" unless quiet?
           rescue DNSimple::RecordNotFound => e
             domain = DNSimple::Domain.create(domain_name) unless dryrun?
             puts "Created domain: #{domain.inspect}" unless dryrun?

@@ -77,20 +77,20 @@ module DNSimple
     end
 
     class Zonefile
-      def self.load(s)
+      def self.load(s, quiet)
         zone = new
 
         s.split(/\n/).each do |line|
           next if line =~ /^\s*$/
             next if line =~ /^\s*#/
-            record = parse_line(line)
+            record = parse_line(line, quiet)
           zone << record if record
         end
 
         zone
       end
 
-      def self.parse_line(line)
+      def self.parse_line(line, quiet)
         case line
         when /^\+([^:]+):([^:]+):?(.*)/ then Tinydns::A.new($1, $2, $3)
         when /^C([^:]+):([^:]+):?(.*)/ then Tinydns::CNAME.new($1, $2, $3)
@@ -99,7 +99,7 @@ module DNSimple
         when /^:([^:]+):33:([^:]+):?([^:]*):?(.*)/ then Tinydns::SRV.new($1, $2, $3, 4)
         when /^:([^:]+):35:([^:]+):?(.*)/ then Tinydns::NAPTR.new($1, $2, $3)
         else
-          $stderr.puts "Skipping unsupported record: #{line}"
+          $stderr.puts "Skipping unsupported record: #{line}" unless quiet
         end
       end
 
