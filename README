@@ -5,6 +5,11 @@ Before you start, put your credentials in ~/.dnsimple. For example:
     username: your_username
     password: your_password
 
+Or if using an API token:
+
+    username: your_username
+    api_token: your_api_token
+
 To run:
 
     bundle install
@@ -13,6 +18,10 @@ To run:
 Each of your zone files should be named with the domain name plus the .db or .txt extension. For example:
 
     example.com.db
+
+Or for tinydns:
+
+    bundle exec bin/import_zone -t=tinydns data
 
 When you run the importer it will create the domain in your DNSimple account if necessary. It will then import your records from the zonefiles.
 
